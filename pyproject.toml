@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "simple-rl"
+version = "0.1.0"
+description = ""
+authors = ["Thomas M. S. Smith <tmss20@bath.ac.uk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.10"
+numpy = "^1.26.0"
+matplotlib = "^3.7.0"
+multilevelsuccessoroptions = {path = "../MultiLevelSuccessorOptions/", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+jupyterlab = "^3.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
