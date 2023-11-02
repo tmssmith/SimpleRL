@@ -1,10 +1,12 @@
 from typing import Hashable
-from base_agent import BaseAgent
+from simple_rl.agents import BaseAgent
 from collections import defaultdict
 from numpy.random import Generator as RNG
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
 
 
-class QLearning_Agent(BaseAgent):
+class QLearningAgent(BaseAgent):
     def __init__(
         self,
         rng: RNG,
@@ -64,7 +66,7 @@ class QLearning_Agent(BaseAgent):
         # Return actions with max value.
         return [action for action, value in self.q[state].items() if value == max_q_value]
 
-    def update_q_table(self, state: Hashable, action: tuple, reward, next_state: Hashable, terminal: bool):
+    def update_q_table(self, state: Hashable, action: tuple, reward: float, next_state: Hashable, terminal: bool):
         if terminal:
             q_next = 0
         else:

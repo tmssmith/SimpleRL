@@ -1,8 +1,8 @@
 from typing import Hashable
-from qlearning import QLearning_Agent
+from simple_rl.agents import QLearningAgent
 
 
-class SARSA_Agent(QLearning_Agent):
+class SARSAAgent(QLearningAgent):
     def update_q_table(self, state: Hashable, action: tuple, reward, next_state: Hashable, terminal: bool):
         if terminal:
             q_next = 0

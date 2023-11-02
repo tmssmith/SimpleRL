@@ -1,10 +1,10 @@
 from typing import Hashable
-from base_agent import BaseAgent
+from simple_rl.agents import BaseAgent
 from collections import defaultdict
 from numpy.random import Generator as RNG
 
 
-class ValueIteration_Agent(BaseAgent):
+class ValueIterationAgent(BaseAgent):
     def __init__(
         self, rng: RNG, actions: list[Hashable], gamma: float, theta: float, default_state_value: float = 0.0
     ) -> None:
