@@ -1,6 +1,6 @@
 from typing import Hashable
 from simple_rl.agents import BaseAgent
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from numpy.random import Generator as RNG
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
@@ -33,9 +33,12 @@ class QLearningAgent(BaseAgent):
         self.alpha_decay = alpha_decay
         self.rng = rng
         self.actions = set(actions)
+        self.default_action_value = default_action_value
         self.q = defaultdict(
             lambda: defaultdict(lambda: default_action_value)
-        )  # Q(s,w), initalised to default action value.
+        )  # Q(s,a), initalised to default action value.
+        self.qUpdate = namedtuple("qUpdate", ["s", "a", "q"])
+        self.learning_history = []  # [(s,a,Q(s,a))] (updated Q(s,a) at each Q update step)
 
     def run(self, env, steps: int) -> None:
         state = env.reset()
@@ -72,6 +75,17 @@ class QLearningAgent(BaseAgent):
         else:
             q_next = self.get_max_q_value(next_state)
         self.q[state][action] += self.alpha * (reward + self.gamma * q_next - self.q[state][action])
+        self.learning_history.append(self.qUpdate(state, action, self.q[state][action]))
 
     def decay_alpha(self, step):
         self.alpha = 1 / (1 + self.alpha_decay * step) * self.alpha_init
+
+    def get_q_values(self, t=None):
+        q = defaultdict(lambda: defaultdict(lambda: self.default_action_value))
+        if t is None:
+            return self.q
+        else:
+            for step in range(t):
+                (state, action, q_update) = self.learning_history[step]
+                q[state][action] = q_update
+            return q
