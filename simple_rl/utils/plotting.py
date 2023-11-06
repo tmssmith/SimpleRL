@@ -1,8 +1,10 @@
+from functools import partial
+import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import matplotlib.colors as colors
-import numpy as np
-import random
+from simple_rl.agents import BaseAgent
 
 
 def plot_agent_policy(agent, env):
@@ -86,7 +88,53 @@ def plot_maze_env(env, labels=True, fig=None, ax=None):
     return fig, ax, im
 
 
-def func(frame, fig):
-    vals = [random.random() for _ in range(169)]
-    vals = np.reshape(vals, (13, 13))
-    fig.gca().imshow(vals)
+def func(frame, agent, env, data, ax):
+    for art in ax.get_children():
+        if isinstance(art, mpl.patches.FancyArrow):
+            art.remove()
+    l = 0.4
+    arrows = [(0, -l), (0, l), (-l, 0), (l, 0)]
+    vals = np.zeros_like(env.gridworld, dtype=float)
+    q_dict = agent.get_q_values(t=frame)
+    for state in range(env.num_states):
+        max_q_value = max(q_dict[state][action] for action in agent.actions)
+        greedy_actions = [action for action, value in q_dict[state].items() if value == max_q_value]
+        y, x = env._index_to_coords(state)
+        vals[y, x] = max_q_value
+        for a in greedy_actions:
+            ax.arrow(
+                x,
+                y,
+                *arrows[a],
+                length_includes_head=True,
+                head_width=0.2,
+                head_length=0.2,
+                color="k",
+                zorder=2,
+            )
+    data.set_data(vals)
+    return (data, ax)
+
+
+def animate_learning(agent: BaseAgent, env, frames: int):
+    gridworld_map = np.ones_like(env.gridworld, dtype=float)
+    gridworld_map[env.gridworld == "#"] = 0.0
+
+    fig, ax = plt.subplots()
+
+    ax.grid(which="major", axis="both", linestyle="-", color="k", linewidth=2, zorder=1)
+    ax.tick_params(left=False, bottom=False)
+    ax.set_xticks(np.arange(-0.5, gridworld_map.shape[1], 1))
+    ax.set_xticklabels([])
+    ax.set_yticks(np.arange(-0.5, gridworld_map.shape[0], 1))
+    ax.set_yticklabels([])
+
+    cmap = colors.ListedColormap(["black", "white", "grey"])
+    norm = colors.BoundaryNorm(range(cmap.N + 1), cmap.N)
+    walls = ax.imshow(gridworld_map, cmap=cmap, norm=norm, zorder=0)
+
+    alphas = np.copy(gridworld_map)
+    data = ax.imshow(gridworld_map, alpha=alphas, zorder=1)
+
+    ani = animation.FuncAnimation(fig, partial(func, agent=agent, env=env, data=data, ax=ax), frames, blit=False)
+    return ani
