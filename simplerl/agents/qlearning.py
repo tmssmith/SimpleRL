@@ -1,5 +1,5 @@
 from typing import Hashable
-from simple_rl.agents import BaseAgent
+from simplerl.agents import BaseAgent
 from collections import defaultdict, namedtuple
 from numpy.random import Generator as RNG
 import matplotlib.animation as animation

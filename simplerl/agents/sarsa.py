@@ -1,5 +1,5 @@
 from typing import Hashable
-from simple_rl.agents import QLearningAgent
+from simplerl.agents import QLearningAgent
 
 
 class SARSAAgent(QLearningAgent):

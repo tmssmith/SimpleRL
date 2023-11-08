@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "simple-rl"
+name = "simplerl"
 version = "0.1.0"
 description = ""
 authors = ["Thomas M. S. Smith <tmss20@bath.ac.uk>"]

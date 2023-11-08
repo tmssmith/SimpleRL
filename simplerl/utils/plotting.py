@@ -4,7 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import matplotlib.colors as colors
-from simple_rl.agents import BaseAgent
+from simplerl.agents import BaseAgent
 
 
 def plot_agent_policy(agent, env):

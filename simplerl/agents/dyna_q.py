@@ -1,7 +1,7 @@
 from typing import Hashable
 from numpy.random import Generator as RNG
 from collections import defaultdict, Counter
-from simple_rl.agents import QLearningAgent
+from simplerl.agents import QLearningAgent
 
 
 class DynaQAgent(QLearningAgent):
