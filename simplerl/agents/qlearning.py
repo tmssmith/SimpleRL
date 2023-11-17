@@ -54,6 +54,28 @@ class QLearningAgent(BaseAgent):
             else:
                 state = next_state
 
+    def run_episodic(self, env, num_episodes: int) -> None:
+        returns = []
+        for episode in range(num_episodes):
+            episode_return = 0
+            episode_steps = 0
+            state = env.reset()
+            terminal = False
+            while not terminal:
+                action = self.policy(state)
+                next_state, reward, terminal, _ = env.step(action)
+                episode_return += reward * self.gamma**episode_steps
+                episode_steps += 1
+                self.update_q_table(state, action, reward, next_state, terminal)
+                if self.alpha_decay:
+                    self.decay_alpha(episode_steps)
+                if terminal:
+                    returns.append(episode_return)
+                    state = env.reset()
+                else:
+                    state = next_state
+        return returns
+
     def policy(self, state: Hashable) -> Hashable:
         if self.rng.random() <= self.eps:
             return self.rng.choice(sorted(self.actions))
